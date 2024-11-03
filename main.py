@@ -1,3 +1,11 @@
+#
+# A Tool to document postgres database structure
+# More info in README.md
+# Visit GitHub page https://github.com/ajandris/postgres_db_desc
+#
+# @author Andris Jancevskis
+#
+
 import psycopg2
 import os
 
@@ -5,6 +13,7 @@ import os
 try:
     import env
 except ImportError:
+    # no env.py file present
     pass
 
 #

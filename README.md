@@ -1,11 +1,36 @@
 # postgres_db_desc
 
-This commandline tool describes postgresql database structure and creates md file to be copied into a project README.md file. 
+This is a commandline tool for documenting postgresql database tables. The result is a md file.
 
+GitHub: https://github.com/ajandris/postgres_db_desc
+
+# Author
+Andris Jancevskis
+
+Date: 03/11/2024
+
+# Additional features
+* Can create a list what tables to exclude - look for TABLE_EXCLUSION_LIST in the code. Initially there is Django exclusion list
+* Postgres specific column types can be replaced with more common ones - look for REPLACE_COLUMN_TYPE_NAME. 
+
+# Known issues
+1. Multiple column constraints (keys) are generated as separate constraint for each column
+2. Not tested with Cloud databases/ no URL connection tested
+
+# Software versions
+
+Program is developed and tested on (the full Python module list is in the file requirements.txt)
+* Python v3.12.2
+* PostgreSQL v16
+* psycopg2 v2.9.10
 
 # Deployment
 
-1. Create env.py file in the project root and enter following lines and change ```<xyz>``` with requested informantion
+These instructions are for Windows OS.
+
+1. Make project directory
+2. Copy project files into project directory
+3. Create env.py file in the project root and enter following lines and change ```<xyz>``` with requested informantion
 
 ```
 import os
@@ -18,21 +43,21 @@ os.environ.setdefault("PG_DATABASE_HOST", "<database server host>")
 os.environ.setdefault("PG_DATABASE_PORT", "<database server port, usually 5432>")
 ```
 
-2. Create virtual environment
+4. Create virtual environment
 ```
-python3 -m venv .venv
+py -m venv .venv
 ```
-3. Activate virtual environment
+5. Activate virtual environment
+
 ```
-For windows:
 .venv\Scripts\Activate.bat
 ```
-4. install required modules from requirements.txt
+6. install required modules from requirements.txt
 ```
 pip install -r requirements.txt
 ```
-5. run the program
+7. run the program
 ```
-python3 main.py
+py main.py
 ```
-The resulting file is **structure.md** in the project root folder. 
+The resulting file is **structure.md** in the project directory. 
