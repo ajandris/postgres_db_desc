@@ -71,7 +71,7 @@ def main(file_name):
         table_name = row[0]
         file.write(f"\n\n## Table: {table_name}\n")
         if row[1] is not None:
-            file.write(f"Table description: {row[1]}\n")
+            file.write(f"Table comment: {row[1]}\n")
 
 
         # Primary Key
@@ -84,7 +84,8 @@ def main(file_name):
                     kku.table_schema = 'public' \
                     and kku.constraint_name = tc.constraint_name \
                     and tc.constraint_type = 'PRIMARY KEY' \
-                    and tc.table_name = '{table_name}'"
+                    and tc.table_name = '{table_name}' \
+                order by kku.constraint_name"
         pk_cur.execute(sql)
 
         file.write("\n### Primary Key: \n")
@@ -104,7 +105,8 @@ def main(file_name):
                     kku.table_schema = 'public' \
                     and kku.constraint_name = tc.constraint_name \
                     and tc.constraint_type = 'UNIQUE' \
-                    and tc.table_name = '{table_name}'"
+                    and tc.table_name = '{table_name}' \
+                order by kku.constraint_name"
         uk_cur.execute(sql)
 
         if uk_cur.rowcount > 0 :
@@ -115,17 +117,72 @@ def main(file_name):
         uk_cur.close()
 
 
-        # Foreign Keys
-        file.write("### Foreign Key(s): \n\n")
+        # Foreign Key constraints
         fk_cur = conn.cursor()
-        sql = f"SELECT constraint_name, unique_constraint_name as refering_to \
-            FROM information_schema.referential_constraints where constraint_name like '{table_name}_%'"
+        sql = f"select kku.constraint_name, kku.table_name, kku.column_name, \
+                    kku_ref.table_name ref_table, kku_ref.column_name ref_column_name \
+                from \
+                    information_schema.key_column_usage kku,\
+                    information_schema.table_constraints tc,\
+                    information_schema.referential_constraints rc,\
+                    information_schema.key_column_usage kku_ref\
+                where\
+                    kku.table_schema = 'public'\
+                    and kku.table_name = '{table_name}'\
+                    and kku.constraint_name = tc.constraint_name\
+                    and kku.constraint_name = rc.constraint_name\
+                    and rc.unique_constraint_name = kku_ref.constraint_name\
+                    and tc.constraint_type = 'FOREIGN KEY'\
+                order by kku.constraint_name, kku.column_name"
         
         fk_cur.execute(sql)
-        for fk in fk_cur.fetchall():
-             file.write(f"Name: {fk[0]}, refering to \n\n")       
 
-        pk_cur.close()
+        if fk_cur.rowcount > 0:
+            file.write("### Foreign Key constraints: \n\n")
+
+            for fk in fk_cur.fetchall():
+                name = fk[0]
+                from_column = fk[2]
+                to_table = fk[3]
+                to_column = fk[4]
+                file.write(f'"{name}" FOREIGN KEY ({from_column}) REFERENCES {to_table}({to_column})\n\n')       
+
+            fk_cur.close()
+
+
+        # Referenced by
+        fk_cur = conn.cursor()
+        sql = f"select kku.constraint_name, kku.table_name, kku.column_name, \
+                    kku_ref.table_name ref_table, kku_ref.column_name ref_column_name \
+                from \
+                    information_schema.key_column_usage kku, \
+                    information_schema.table_constraints tc, \
+                    information_schema.referential_constraints rc, \
+                    information_schema.key_column_usage kku_ref \
+                where \
+                    kku.table_schema = 'public' \
+                    and kku.constraint_name = tc.constraint_name \
+                    and kku.constraint_name = rc.constraint_name \
+                    and rc.unique_constraint_name = kku_ref.constraint_name \
+                    and kku_ref.table_name = '{table_name}' \
+                    and tc.constraint_type = 'FOREIGN KEY' \
+                order by kku.constraint_name, kku.column_name"
+        
+        fk_cur.execute(sql)
+
+        if fk_cur.rowcount > 0:
+            file.write("### Referenced-by: \n\n")
+
+            for fk in fk_cur.fetchall():
+                name = fk[0]
+                to_table = fk[1]
+                to_column = fk[2]
+                from_table = fk[3]
+                from_column = fk[4]
+
+                file.write(f'TABLE "{from_table}" CONSTRAINT "{name}" FOREIGN KEY ({from_column}) REFERENCES {to_table}({to_column})\n\n')       
+
+            fk_cur.close()
 
         # Columns
         cur_col = conn.cursor()
@@ -133,7 +190,7 @@ def main(file_name):
         	from information_schema.columns col \
 		        left join pg_catalog.pg_class cl on (col.table_name = cl.relname) \
 		        left join pg_catalog.pg_description ds on (cl.oid = ds.objoid and col.ordinal_position = ds.objsubid) \
-            where table_schema = 'public' and table_name = '{row[0]}' order by ordinal_position"
+            where table_schema = 'public' and table_name = '{table_name}' order by ordinal_position"
 
         cur_col.execute(sql)
 
