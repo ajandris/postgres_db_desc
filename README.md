@@ -64,12 +64,12 @@ py main.py
 ```
 The resulting file is **structure.md** in the project directory. 
 
-## Incorporated in a Django project
+## Incorporated into a Django project
 
-1. Copy file main.py into project root directory
+1. Copy file main.py into project root directory.
 2. Add main.py to .gitignore file. For the project convinience main.py can be renamed to other name. In that case write the new name into .gitignore file.
 3. In the *get_connection* function, change environment variable names you are using for your project.
-4. Run the program
+4. Run the program.
 
 Assuming the name has not been changed:
 ```
