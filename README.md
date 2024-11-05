@@ -1,6 +1,6 @@
 # postgres_db_desc
 
-This is a commandline tool for documenting postgresql database tables. The result is a md file.
+This is a commandline tool for documenting PostgreSQL database tables. The result is a md file.
 
 GitHub: https://github.com/ajandris/postgres_db_desc
 
@@ -27,6 +27,8 @@ Program is developed and tested on (the full Python module list is in the file r
 # Deployment
 
 These instructions are for Windows OS.
+
+## As a stand-alone version
 
 1. Make project directory
 2. Copy project files into project directory
@@ -61,3 +63,16 @@ pip install -r requirements.txt
 py main.py
 ```
 The resulting file is **structure.md** in the project directory. 
+
+## Incorporated in a Django project
+
+1. Copy file main.py into project root directory
+2. Add main.py to .gitignore file. For the project convinience main.py can be renamed to other name. In that case write the new name into .gitignore file.
+3. In the *get_connection* function, change environment variable names you are using for your project.
+4. Run the program
+
+Assuming the name has not been changed:
+```
+py main.py
+```
+The resulting file is **structure.md** in the project root directory. 
