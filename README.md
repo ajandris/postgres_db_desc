@@ -71,7 +71,7 @@ The resulting file is **structure.md** in the project directory.
 3. In the *get_connection* function, change environment variable names you are using for your project.
 4. Run the program.
 
-Assuming the name has not been changed:
+Assuming the file name has not been changed:
 ```
 py main.py
 ```
