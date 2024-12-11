@@ -39,7 +39,7 @@ def main(file_name):
 
     # Django internal tables. Create another one for your app
     TABLE_EXCLUSION_LIST = ['django_admin_log', 'django_content_type', 'django_migrations', 'django_session', 'auth_user_user_permissions',
-                            'auth_user_groups', 'auth_user', 'auth_permission', 'auth_group_permissions', 'auth_group']
+                            'auth_user_groups', 'auth_user', 'auth_permission', 'auth_group_permissions', 'auth_group', 'account_emailaddress', 'account_emailconfirmation']
     
     # Uncomment to get all tables
     #TABLE_EXCLUSION_LIST = []
@@ -80,7 +80,7 @@ def main(file_name):
         table_name = row[0]
         file.write(f"\n\n## Table: {table_name}\n")
         if row[1] is not None:
-            file.write(f"Table comment: {row[1]}\n")
+            file.write(f"Table comment: {row[1]}\n\n")
 
 
         # Primary Key
