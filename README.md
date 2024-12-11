@@ -10,7 +10,7 @@ Andris Jancevskis
 Date: 03/11/2024
 
 # Additional features
-* Can create a list what tables to exclude - look for TABLE_EXCLUSION_LIST in the code. Initially there is Django exclusion list
+* Can create a list what tables to exclude - look for TABLE_EXCLUSION_LIST in the code. Initially there is Django with allauth exclusion list
 * Postgres specific column types can be replaced with more common ones - look for REPLACE_COLUMN_TYPE_NAME. 
 
 # Known issues
